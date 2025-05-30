@@ -639,15 +639,21 @@
 
 
 
-        // Check authentication
-        if (localStorage.getItem('adminAuthenticated') !== 'true') {
-            window.location.href = 'index.html'; // Redirect to login if not authenticated
+        // Check authentication on page load
+        if (sessionStorage.getItem('adminSession') !== 'true') {
+            // Clear any potential localStorage flag
+            localStorage.removeItem('adminAuthenticated');
+            // Redirect without creating history entry
+            window.location.replace('index.html');
         }
 
-        // Optional: Add a logout button
+        // Logout function
         function logout() {
+            // Clear both storage mechanisms
+            sessionStorage.removeItem('adminSession');
             localStorage.removeItem('adminAuthenticated');
-            window.location.href = 'index.html'; // Redirect to login after logout
+            // Redirect without creating history entry
+            window.location.replace('index.html');
         }
 
 
@@ -983,10 +989,10 @@
                 deleteModal.style.display = 'none';
             });
 
-            function logout() {
-                localStorage.removeItem('adminAuthenticated');
-                window.location.replace('index.html'); // Clears history entry
-            }
+            // function logout() {
+            //     localStorage.removeItem('adminAuthenticated');
+            //     window.location.replace('index.html'); // Clears history entry
+            // }
 
             // Close modal when clicking outside
             window.addEventListener('click', (e) => {

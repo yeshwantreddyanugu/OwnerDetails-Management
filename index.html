@@ -125,32 +125,32 @@
     </div>
 
     <script>
-        const loginForm = document.getElementById('loginForm');
-        const errorMsg = document.getElementById('errorMsg');
+    const loginForm = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
 
-        // Dummy credentials
-        const dummyUsername = 'admin';
-        const dummyPassword = 'admin123';
+    // Dummy credentials
+    const dummyUsername = 'admin';
+    const dummyPassword = 'admin123';
 
-        // Check if already logged in using localStorage
-        if (localStorage.getItem('adminAuthenticated') === 'true') {
-            window.location.href = 'dashboard.html';
+    // Clear any existing session on login page load
+    localStorage.removeItem('adminAuthenticated');
+    sessionStorage.removeItem('adminSession');
+
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (username === dummyUsername && password === dummyPassword) {
+            // Set session storage (cleared when browser closes)
+            sessionStorage.setItem('adminSession', 'true');
+            // Redirect without creating history entry
+            window.location.replace('dashboard.html');
+        } else {
+            errorMsg.textContent = 'Invalid credentials. Try admin/admin123';
         }
-
-        loginForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-
-            if (username === dummyUsername && password === dummyPassword) {
-                // Set localStorage flag for authentication
-                localStorage.setItem('adminAuthenticated', 'true');
-                window.location.href = 'dashboard.html'; // Redirect to dashboard
-            } else {
-                errorMsg.textContent = 'Invalid credentials. Try admin/admin123';
-            }
-        });
-    </script>
+    });
+</script>
 
 </body>
 
