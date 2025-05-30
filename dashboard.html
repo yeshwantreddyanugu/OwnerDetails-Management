@@ -1,13 +1,496 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --danger-color: #f72585;
+            --success-color: #4cc9f0;
+            --dark-color: #2b2d42;
+            --light-color: #f8f9fa;
+            --gray-color: #adb5bd;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background-color: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+        }
+
+        .admin-info h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+
+        .admin-info span {
+            font-size: 12px;
+            color: var(--gray-color);
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-nav li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .sidebar-nav li a:hover {
+            background-color: #f0f2f5;
+            color: var(--primary-color);
+        }
+
+        .sidebar-nav li a i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-nav li.active a {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .header-title h2 {
+            font-size: 24px;
+            color: var(--dark-color);
+        }
+
+        .content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+        }
+
+        .data-table-container {
+            margin-top: 30px;
+        }
+
+        .table-section {
+            margin-bottom: 30px;
+        }
+
+        .table-section h3 {
+            font-size: 18px;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 15px 8px 35px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-color);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: var(--border-radius);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: var(--dark-color);
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn i {
+            font-size: 12px;
+        }
+
+        .btn.view {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn.verify {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn.unverify {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        .btn.delete {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn.secondary {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+
+        .btn.primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn.danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(67, 97, 238, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            width: 500px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            color: var(--dark-color);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            width: 150px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .detail-value {
+            flex: 1;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge.verified {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-badge.unverified {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: var(--danger-color);
+        }
+
+        .amenity {
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 5px;
+            padding: 3px 8px;
+            background-color: #f0f2f5;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .amenity i {
+            margin-right: 5px;
+        }
+
+        /* Add to your existing CSS */
+        .fa-spinner.fa-spin {
+            margin-right: 5px;
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+
+            .main-content {
+                padding: 15px;
+            }
+
+            .table-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .action-btns {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                margin-bottom: 10px;
+            }
+
+            .detail-label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+
 <body>
     <div class="dashboard-container">
         <div class="sidebar">
@@ -44,37 +527,61 @@
                 <div class="header-title">
                     <h2>Dashboard</h2>
                 </div>
-                <div class="verification-toggle">
-                    <button class="toggle-btn active" data-verified="true">Verified</button>
-                    <button class="toggle-btn" data-verified="false">Unverified</button>
-                </div>
             </header>
             <div class="content">
                 <div class="data-table-container">
-                    <div class="table-header">
-                        <h3>Property Owners</h3>
-                        <div class="table-actions">
+                    <!-- Verified Owners Table -->
+                    <div class="table-section">
+                        <h3>Verified Property Owners</h3>
+                        <div class="table-header">
                             <div class="search-box">
-                                <input type="text" placeholder="Search..." id="searchInput">
+                                <input type="text" placeholder="Search verified owners..." id="searchVerified">
                                 <i class="fas fa-search"></i>
                             </div>
                         </div>
+                        <div class="table-wrapper">
+                            <table id="verifiedTable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Address</th>
+                                        <th>Rent Amount</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="verifiedBody">
+                                    <!-- Verified data will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="table-wrapper">
-                        <table id="ownersTable">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Type</th>
-                                    <th>Address</th>
-                                    <th>Rent Amount</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody">
-                                <!-- Data will be loaded here -->
-                            </tbody>
-                        </table>
+
+                    <!-- Unverified Owners Table -->
+                    <div class="table-section">
+                        <h3>Unverified Property Owners</h3>
+                        <div class="table-header">
+                            <div class="search-box">
+                                <input type="text" placeholder="Search unverified owners..." id="searchUnverified">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="unverifiedTable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Address</th>
+                                        <th>Rent Amount</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="unverifiedBody">
+                                    <!-- Unverified data will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -97,23 +604,6 @@
         </div>
     </div>
 
-    <!-- Verify Confirmation Modal -->
-    <div class="modal" id="verifyModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Confirm Verification</h3>
-                <button class="close-btn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to verify this property owner?</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn secondary cancel-verify">Cancel</button>
-                <button class="btn primary confirm-verify">Yes, Verify</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Delete Confirmation Modal -->
     <div class="modal" id="deleteModal">
         <div class="modal-content">
@@ -131,6 +621,356 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const API_BASE_URL = 'https://apiabhiproject.lytortech.com/api/v1';
+        let currentVerifiedOwners = [];
+        let currentUnverifiedOwners = [];
+        let currentOwnerId = null;
+
+        // DOM Elements
+        const verifiedBody = document.getElementById('verifiedBody');
+        const unverifiedBody = document.getElementById('unverifiedBody');
+        const searchVerified = document.getElementById('searchVerified');
+        const searchUnverified = document.getElementById('searchUnverified');
+        const viewModal = document.getElementById('viewModal');
+        const deleteModal = document.getElementById('deleteModal');
+        const viewModalBody = document.getElementById('viewModalBody');
+
+        // Fetch all owners data
+        async function fetchAllOwners() {
+            try {
+                // Show loading states
+                verifiedBody.innerHTML = '<tr><td colspan="5" class="loading-spinner"><div class="spinner"></div></td></tr>';
+                unverifiedBody.innerHTML = '<tr><td colspan="5" class="loading-spinner"><div class="spinner"></div></td></tr>';
+
+                console.log('Fetching verified owners...');
+                const verifiedResponse = await fetch(`${API_BASE_URL}/verified/data/true`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'ngrok-skip-browser-warning': 'true'
+                    }
+                });
+
+                console.log('Fetching unverified owners...');
+                const unverifiedResponse = await fetch(`${API_BASE_URL}/verified/data/false`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'ngrok-skip-browser-warning': 'true'
+                    }
+                });
+
+                if (!verifiedResponse.ok || !unverifiedResponse.ok) {
+                    throw new Error('Failed to fetch owners data');
+                }
+
+                currentVerifiedOwners = await verifiedResponse.json();
+                currentUnverifiedOwners = await unverifiedResponse.json();
+
+                console.log('Verified owners:', currentVerifiedOwners);
+                console.log('Unverified owners:', currentUnverifiedOwners);
+
+                renderVerifiedOwners(currentVerifiedOwners);
+                renderUnverifiedOwners(currentUnverifiedOwners);
+            } catch (error) {
+                console.error('Error fetching owners:', error);
+                verifiedBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Failed to load verified owners</td></tr>';
+                unverifiedBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Failed to load unverified owners</td></tr>';
+            }
+        }
+
+        // Render verified owners
+        function renderVerifiedOwners(owners) {
+            if (owners.length === 0) {
+                verifiedBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #777;">No verified owners found</td></tr>';
+                return;
+            }
+
+            verifiedBody.innerHTML = owners.map(owner => `
+                <tr>
+                    <td>${owner.name}</td>
+                    <td>${owner.type}</td>
+                    <td>${owner.address}</td>
+                    <td>₹${owner.rentAmount?.toLocaleString() || '0'}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn view" data-id="${owner.id}">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn unverify" data-id="${owner.id}">
+                                <i class="fas fa-times-circle"></i> Unverify
+                            </button>
+                            <button class="btn delete" data-id="${owner.id}">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Render unverified owners
+        function renderUnverifiedOwners(owners) {
+            if (owners.length === 0) {
+                unverifiedBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #777;">No unverified owners found</td></tr>';
+                return;
+            }
+
+            unverifiedBody.innerHTML = owners.map(owner => `
+                <tr>
+                    <td>${owner.name}</td>
+                    <td>${owner.type}</td>
+                    <td>${owner.address}</td>
+                    <td>₹${owner.rentAmount?.toLocaleString() || '0'}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn view" data-id="${owner.id}">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn verify" data-id="${owner.id}">
+                                <i class="fas fa-check-circle"></i> Verify
+                            </button>
+                            <button class="btn delete" data-id="${owner.id}">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Toggle verification status
+        async function toggleVerification(ownerId, currentStatus) {
+            const newStatus = !currentStatus;
+            const btn = document.querySelector(`.btn[data-id="${ownerId}"]`);
+
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                btn.disabled = true;
+            }
+
+            try {
+                const url = new URL(`${API_BASE_URL}/data/${ownerId}/verification`);
+                url.searchParams.append('isVerified', newStatus);
+
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'ngrok-skip-browser-warning': 'true'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update verification status');
+                }
+
+                // Refresh both tables after status change
+                await fetchAllOwners();
+            } catch (error) {
+                console.error('Error toggling verification:', error);
+                alert('Failed to update verification status. Please try again.');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = currentStatus ?
+                        '<i class="fas fa-times-circle"></i> Unverify' :
+                        '<i class="fas fa-check-circle"></i> Verify';
+                }
+            }
+        }
+
+        // Delete owner
+        async function deleteOwner(ownerId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/ownerdata/delete/${ownerId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'ngrok-skip-browser-warning': 'true'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete owner');
+                }
+
+                // Refresh both tables after deletion
+                await fetchAllOwners();
+            } catch (error) {
+                console.error('Error deleting owner:', error);
+                alert('Failed to delete owner. Please try again.');
+            }
+        }
+
+        // Show owner details
+        function showOwnerDetails(ownerId) {
+            // Check both verified and unverified owners
+            const owner = [...currentVerifiedOwners, ...currentUnverifiedOwners].find(o => o.id === ownerId);
+            if (!owner) return;
+
+            viewModalBody.innerHTML = `
+                <div class="detail-row">
+                    <div class="detail-label">Property Name:</div>
+                    <div class="detail-value">${owner.name || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Property Type:</div>
+                    <div class="detail-value">${owner.type || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Address:</div>
+                    <div class="detail-value">${owner.address || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Rent Amount:</div>
+                    <div class="detail-value">₹${owner.rentAmount?.toLocaleString() || '0'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Deposit Amount:</div>
+                    <div class="detail-value">₹${owner.depositAmount?.toLocaleString() || '0'}</div>
+                </div>
+                <div class="detail-row">
+    <div class="detail-label">Status:</div>
+    <div class="detail-value">
+        ${owner.verified === true ?
+                    '<span style="background-color: rgba(76, 201, 240, 0.1); color: #4cc9f0; padding: 3px 8px; border-radius: 4px;">Verified</span>' :
+                    (owner.verified === false ?
+                        '<span style="background-color: rgba(247, 37, 133, 0.1); color: #f72585; padding: 3px 8px; border-radius: 4px;">Unverified</span>' :
+                        'N/A')}
+    </div>
+</div>
+
+                <div class="detail-row">
+                    <div class="detail-label">Owner Name:</div>
+                    <div class="detail-value">${owner.ownerName || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Contact Number:</div>
+                    <div class="detail-value">${owner.contactNumber || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Alternate Contact:</div>
+                    <div class="detail-value">${owner.alternateContact || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Email:</div>
+                    <div class="detail-value">${owner.email || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Total Rooms:</div>
+                    <div class="detail-value">${owner.totalRooms || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Available Rooms:</div>
+                    <div class="detail-value">${owner.availableRooms || 'N/A'}</div>
+                </div>
+                
+                <div class="amenities-container">
+                    <div class="detail-label">Amenities:</div>
+                    <div class="detail-value">
+                        ${owner.hasWifi ? '<span class="amenity"><i class="fas fa-wifi"></i> WiFi</span>' : ''}
+                        ${owner.hasAC ? '<span class="amenity"><i class="fas fa-snowflake"></i> AC</span>' : ''}
+                        ${owner.hasFood ? '<span class="amenity"><i class="fas fa-utensils"></i> Food</span>' : ''}
+                        ${owner.hasLaundry ? '<span class="amenity"><i class="fas fa-tshirt"></i> Laundry</span>' : ''}
+                    </div>
+                </div>
+                
+                <div class="modal-section">
+                    <h4>Additional Information</h4>
+                    <div class="detail-row">
+                        <div class="detail-label">Created At:</div>
+                        <div class="detail-value">${owner.createdAt ? new Date(owner.createdAt).toLocaleString() : 'N/A'}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Last Updated:</div>
+                        <div class="detail-value">${owner.updatedAt ? new Date(owner.updatedAt).toLocaleString() : 'N/A'}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">UID:</div>
+                        <div class="detail-value">${owner.uid || 'N/A'}</div>
+                    </div>
+                </div>
+            `;
+
+            viewModal.style.display = 'flex';
+        }
+
+
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAllOwners();
+
+            // Search functionality for verified owners
+            searchVerified.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filtered = currentVerifiedOwners.filter(owner =>
+                    owner.name.toLowerCase().includes(searchTerm) ||
+                    owner.type.toLowerCase().includes(searchTerm) ||
+                    owner.address.toLowerCase().includes(searchTerm)
+                );
+                renderVerifiedOwners(filtered);
+            });
+
+            // Search functionality for unverified owners
+            searchUnverified.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filtered = currentUnverifiedOwners.filter(owner =>
+                    owner.name.toLowerCase().includes(searchTerm) ||
+                    owner.type.toLowerCase().includes(searchTerm) ||
+                    owner.address.toLowerCase().includes(searchTerm)
+                );
+                renderUnverifiedOwners(filtered);
+            });
+
+            // Handle table actions
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('.btn');
+                if (!btn) return;
+
+                const ownerId = parseInt(btn.dataset.id);
+                currentOwnerId = ownerId;
+
+                if (btn.classList.contains('view')) {
+                    showOwnerDetails(ownerId);
+                } else if (btn.classList.contains('verify')) {
+                    toggleVerification(ownerId, false);
+                } else if (btn.classList.contains('unverify')) {
+                    toggleVerification(ownerId, true);
+                } else if (btn.classList.contains('delete')) {
+                    deleteModal.style.display = 'flex';
+                }
+            });
+
+            // Modal close buttons
+            document.querySelectorAll('.close-btn, .close-modal').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    viewModal.style.display = 'none';
+                    deleteModal.style.display = 'none';
+                });
+            });
+
+            // Delete confirmation
+            document.querySelector('.confirm-delete').addEventListener('click', () => {
+                deleteModal.style.display = 'none';
+                deleteOwner(currentOwnerId);
+            });
+
+            document.querySelector('.cancel-delete').addEventListener('click', () => {
+                deleteModal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === viewModal) viewModal.style.display = 'none';
+                if (e.target === deleteModal) deleteModal.style.display = 'none';
+            });
+        });
+    </script>
 </body>
+
 </html>
