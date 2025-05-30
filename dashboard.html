@@ -514,11 +514,12 @@
                         </a>
                     </li>
                     <li>
-                        <a href="logout.html">
+                        <a href="#" onclick="logout()">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Logout</span>
                         </a>
                     </li>
+
                 </ul>
             </nav>
         </div>
@@ -635,6 +636,24 @@
         const viewModal = document.getElementById('viewModal');
         const deleteModal = document.getElementById('deleteModal');
         const viewModalBody = document.getElementById('viewModalBody');
+
+
+
+        // Check authentication
+        if (localStorage.getItem('adminAuthenticated') !== 'true') {
+            window.location.href = 'index.html'; // Redirect to login if not authenticated
+        }
+
+        // Optional: Add a logout button
+        function logout() {
+            localStorage.removeItem('adminAuthenticated');
+            window.location.href = 'index.html'; // Redirect to login after logout
+        }
+
+
+
+
+
 
         // Fetch all owners data
         async function fetchAllOwners() {
@@ -963,6 +982,11 @@
             document.querySelector('.cancel-delete').addEventListener('click', () => {
                 deleteModal.style.display = 'none';
             });
+
+            function logout() {
+                localStorage.removeItem('adminAuthenticated');
+                window.location.replace('index.html'); // Clears history entry
+            }
 
             // Close modal when clicking outside
             window.addEventListener('click', (e) => {

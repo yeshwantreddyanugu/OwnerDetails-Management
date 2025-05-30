@@ -1,34 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
-    <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo svg {
+            width: 50px;
+            height: 50px;
+            fill: #4cc9f0;
+        }
+
+        .logo h1 {
+            margin: 10px 0 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .input-group input:focus {
+            border-color: #4cc9f0;
+            outline: none;
+        }
+
+        .login-btn {
+            background-color: #4361ee;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .login-btn:hover {
+            background-color: #3f37c9;
+        }
+
+        .error-msg {
+            color: red;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
+
 <body>
     <div class="login-container">
-        <div class="login-box">
-            <div class="logo">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                </svg>
-                <h1>Admin Panel</h1>
-            </div>
-            <form id="loginForm">
-                <div class="input-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-                <div class="input-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <button type="submit" class="login-btn">Login</button>
-            </form>
+        <div class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+            </svg>
+            <h1>Admin Panel</h1>
         </div>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+            <div class="error-msg" id="errorMsg"></div>
+        </form>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const errorMsg = document.getElementById('errorMsg');
+
+        // Dummy credentials
+        const dummyUsername = 'admin';
+        const dummyPassword = 'admin123';
+
+        // Check if already logged in using localStorage
+        if (localStorage.getItem('adminAuthenticated') === 'true') {
+            window.location.href = 'dashboard.html';
+        }
+
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (username === dummyUsername && password === dummyPassword) {
+                // Set localStorage flag for authentication
+                localStorage.setItem('adminAuthenticated', 'true');
+                window.location.href = 'dashboard.html'; // Redirect to dashboard
+            } else {
+                errorMsg.textContent = 'Invalid credentials. Try admin/admin123';
+            }
+        });
+    </script>
+
 </body>
+
 </html>
