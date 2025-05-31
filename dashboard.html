@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Admin Dashboard</title>
     <style>
         :root {
@@ -639,13 +642,29 @@
 
 
 
-        // Check authentication on page load
-        if (sessionStorage.getItem('adminSession') !== 'true') {
-            // Clear any potential localStorage flag
-            localStorage.removeItem('adminAuthenticated');
-            // Redirect without creating history entry
-            window.location.replace('index.html');
+        // Enhanced authentication check
+        function checkAuth() {
+            if (sessionStorage.getItem('adminSession') !== 'true' && localStorage.getItem('adminAuthenticated') !== 'true') {
+                // Clear any potential storage flags
+                sessionStorage.removeItem('adminSession');
+                localStorage.removeItem('adminAuthenticated');
+                // Redirect without creating history entry
+                window.location.replace('index.html');
+                return false;
+            }
+            return true;
         }
+
+
+        // Check authentication on page load and also on pageshow event (for back/forward cache)
+        document.addEventListener('DOMContentLoaded', checkAuth);
+        window.addEventListener('pageshow', function (event) {
+            // Check if page is loaded from bfcache
+            if (event.persisted) {
+                checkAuth();
+            }
+        });
+
 
         // Logout function
         function logout() {
@@ -989,10 +1008,6 @@
                 deleteModal.style.display = 'none';
             });
 
-            // function logout() {
-            //     localStorage.removeItem('adminAuthenticated');
-            //     window.location.replace('index.html'); // Clears history entry
-            // }
 
             // Close modal when clicking outside
             window.addEventListener('click', (e) => {
