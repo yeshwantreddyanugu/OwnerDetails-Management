@@ -198,7 +198,7 @@
 
         requestOtpBtn.addEventListener('click', () => {
             requestOtpBtn.disabled = true; requestOtpBtn.textContent = 'Sending...';
-            fetch('https://apimatrimony.lytortech.com/api/profiles/otp_send', {
+            fetch('https://apiabhiproject.lytortech.com/api/v1/otp_send', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
             })
@@ -225,15 +225,15 @@
                 return;
             }
 
-            // ✅ Dummy OTP check
-            if (otpValue === '123456') {
-                sessionStorage.setItem('adminSession', 'true');
-                window.location.replace('dashboard.html');
-                return;
-            }
+            // // ✅ Dummy OTP check
+            // if (otpValue === '123456') {
+            //     sessionStorage.setItem('adminSession', 'true');
+            //     window.location.replace('dashboard.html');
+            //     return;
+            // }
 
             // 🔐 Actual OTP verification from server
-            fetch(`https://apimatrimony.lytortech.com/api/profiles/otp_verify?email=${encodeURIComponent(email)}&otp=${otpValue}`, {
+            fetch(`https://apiabhiproject.lytortech.com/api/v1/otp_verify?email=${encodeURIComponent(email)}&otp=${otpValue}`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' }
             })
                 .then(res => res.json())
